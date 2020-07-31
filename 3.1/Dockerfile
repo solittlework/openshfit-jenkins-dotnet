@@ -19,7 +19,6 @@ ENV HOME=/opt/app-root \
     DOTNET_FRAMEWORK=netcoreapp3.1 \
     DOTNET_RUNNING_IN_CONTAINER=true \
     DOTNET_SSL_CERT_DIR=/opt/app-root/ssl_dir
-RUN subscription-manager repos --list
 # Install
 RUN yum install -y centos-release-dotnet centos-release-scl-rh && \
     INSTALL_PKGS="rh-nodejs10-npm rh-nodejs10-nodejs-nodemon rh-dotnet31-dotnet-sdk-3.1 rsync" && \
