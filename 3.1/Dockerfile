@@ -9,26 +9,25 @@ LABEL com.redhat.component="rh-dotnet31-jenkins-slave-docker" \
       io.k8s.description="The jenkins slave dotnet image has the dotnet tools on top of the jenkins slave base image." \
       io.openshift.tags="openshift,jenkins,slave,dotnet,dotnet31"
 
-# Don't download/extract docs for nuget packages
-# Enable nodejs and dotnet scl
-ENV DOTNET_CORE_VERSION=3.1 \
-    BASH_ENV=/usr/local/bin/scl_enable \
-    ENV=/usr/local/bin/scl_enable \
-    PROMPT_COMMAND=". /usr/local/bin/scl_enable" \
-    ENABLED_COLLECTIONS="rh-nodejs10 rh-dotnet31" \
-    NUGET_XMLDOC_MODE=skip
 
-COPY contrib/bin/scl_enable /usr/local/bin/scl_enable
-
+ENV HOME=/opt/app-root \
+    PATH=/opt/app-root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    DOTNET_APP_PATH=/opt/app-root/app \
+    DOTNET_DATA_PATH=/opt/app-root/data \
+    DOTNET_DEFAULT_CMD=default-cmd.sh \
+    DOTNET_CORE_VERSION=3.1 \
+    DOTNET_FRAMEWORK=netcoreapp3.1 \
+    DOTNET_RUNNING_IN_CONTAINER=true \
+    DOTNET_SSL_CERT_DIR=/opt/app-root/ssl_dir
+RUN subscription-manager repos --list
 # Install
-# RUN yum install -y centos-release-dotnet centos-release-scl-rh
-
-#  && \
-#     INSTALL_PKGS="rh-dotnet31 rh-nodejs10-npm" && \
-#     yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
-#     rpm -V $INSTALL_PKGS && \
-#     yum clean all -y && \
+RUN yum install -y centos-release-dotnet centos-release-scl-rh && \
+    INSTALL_PKGS="rh-nodejs10-npm rh-nodejs10-nodejs-nodemon rh-dotnet31-dotnet-sdk-3.1 rsync" && \
+    yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
+    rpm -V $INSTALL_PKGS && \
+    yum clean all -y && \
 # yum cache files may still exist (and quite large in size)
+    rm -rf /var/cache/yum/*
 
 # RUN rm -rf /var/cache/yum/*
 
